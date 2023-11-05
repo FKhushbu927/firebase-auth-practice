@@ -1,28 +1,53 @@
-import React from 'react';
+import React, { useState } from 'react';
 import SocialLoginBtn from '../SocialLoginBtn/SocialLoginBtn';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import app from '../../firebase/firebase.config';
 
 const Register = () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+
     const auth = getAuth(app);
-    const handleRegister = () => {
-        signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-              
-                const user = userCredential.user;
-                
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-            });
-    }
+    const handleRegister = (event) => {
+
+        event.preventDefault();
+
+        if (/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password)) {
+            console.log("okay tikh ace ");
+          } else {
+            setError("invalid password ");
+            return;
+          }
+      
+
+      if(email){
+        createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            // Signed up 
+            const user = userCredential.user;
+            // ...
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // ..
+        });
+      }else{
+        setError("broo hobe na email and pass lagbe");
+     
+      }
+            
+    };
+
+    console.log(email, password);
     return (
         <>
-            <div className="container">
+            <div className="container mt-4">
                 <div className='row d-flex justify-content-center align-items-center'>
                     <div className='col-md-6'>
                         <div className="border w-100 m-auto text-center p-5">
+                            <p><small className='text-danger'>{error}</small></p>
                             <form>
                                 <input
                                     type="text"
@@ -33,20 +58,21 @@ const Register = () => {
                                 <br />
 
                                 <input type="email"
-                                    // onChange={(e) => setEmail(e.target.value)}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     className='email p-2 m-2  w-75'
                                     placeholder="enter your email"
                                 />
                                 <br />
 
                                 <input
+                                    onChange={(e) => setPassword(e.target.value)}
                                     type="password"
                                     className='email p-2 m-2  w-75'
                                     placeholder="enter password"
                                     required
                                 />
 
-                                <button className='btn btn-info w-75 p-2 mt-3 text-white'>
+                                <button className='btn btn-info w-75 p-2 mt-3 text-white'  onClick={handleRegister}>
                                     Register
                                 </button>
                                 <p className='p-2'><small className='text-info'>Already have account? login here?</small></p>
